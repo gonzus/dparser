@@ -1,4 +1,5 @@
 D_BUILD_VERSION
+*.swp
 *.o
 *.a
 *.d_parser.c
