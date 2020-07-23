@@ -90,7 +90,7 @@ CFLAGS += -std=c11 -pedantic
 AUX_FILES = dparser/Makefile dparser/LICENSE.txt dparser/README.md dparser/CHANGES dparser/4calc.g dparser/4calc.in dparser/my.g dparser/my.c dparser/index.html dparser/manual.html dparser/faq.html dparser/make_dparser.1 dparser/make_dparser.cat
 TESTS = $(shell ls tests/*g tests/*[0-9] tests/*.check tests/*.flags)
 TEST_FILES = dparser/parser_tests dparser/baseline $(TESTS:%=dparser/%)
-PYTHON_FILES = dparser/python/Makefile dparser/python/*.py dparser/python/*.c dparser/python/*.h dparser/python/*.i dparser/python/README dparser/python/*.html dparser/python/contrib/d* dparser/python/tests/*.py
+PYTHON_FILES = dparser/src/python/Makefile dparser/src/python/*.py dparser/src/python/*.c dparser/src/python/*.h dparser/src/python/*.i dparser/src/python/README dparser/src/python/*.html dparser/src/python/contrib/d* dparser/src/python/tests/*.py
 VERILOG_FILES = dparser/verilog/Makefile dparser/verilog/verilog.g dparser/verilog/README dparser/verilog/ambig.c \
 dparser/verilog/main.c dparser/verilog/vparse.c dparser/verilog/vparse.h dparser/verilog/verilog_tests
 TAR_FILES = $(AUX_FILES) $(TEST_FILES) $(PYTHON_FILES) $(VERILOG_FILES) dparser/D_BUILD_VERSION \
@@ -204,14 +204,18 @@ D_BUILD_VERSION:
 	mv D_BUILD_VERSION.tmp D_BUILD_VERSION
 
 tar:
+<<<<<<< HEAD:Makefile
 	(cd ..;tar czf dparser-$(RELEASE)-src.tar.gz dparser/*.c dparser/*.h $(TAR_FILES))
+=======
+	(cd ../../..;tar czf dparser-$(RELEASE)-src.tar.gz dparser/*.c dparser/*.h $(TAR_FILES))
+>>>>>>> Move stuff around so that it is not on the way:src/c/Makefile
 
 bintar:
-	(cd ..;tar czf d-$(RELEASE)-$(OS_TYPE)-bin.tar.gz $(AUX_FILES) $(LIBRARIES:%=dparser/%) $(INCLUDES:%=dparser/%) $(EXECUTABLE_FILES:%=dparser/%))
+	(cd ../../..;tar czf d-$(RELEASE)-$(OS_TYPE)-bin.tar.gz $(AUX_FILES) $(LIBRARIES:%=dparser/%) $(INCLUDES:%=dparser/%) $(EXECUTABLE_FILES:%=dparser/%))
 
 clean:
 	\rm -f *.o core *.core *.gmon *.d_parser.c *.d_parser.h *.a $(EXEC_FILES)
-	(cd python;make clean)
+	(cd ../python;make clean)
 
 depend:
 	mkdep $(CFLAGS) $(ALL_SRCS)
