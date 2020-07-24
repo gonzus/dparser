@@ -1,3 +1,9 @@
+{
+#include <stdio.h>
+#include <stdlib.h>
+#include "json.h"
+}
+
 element: hash | array | scalar;
 
 hash: '{' hash_elements '}';
@@ -13,6 +19,6 @@ array_element: element;
 scalar: integer | string | boolean | null;
 
 integer: "-?[0-9]+";
-string: '"' "[a-zA-Z0-9]*" '"';
+string: '"' "[^\"\n]*" '"';
 boolean: "true" | "false";
 null: "null";
