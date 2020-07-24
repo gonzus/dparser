@@ -21,21 +21,27 @@ LDLIBS += -L.. -ldparse
 # Configuration to generate parsers from DParser grammars.
 DPARSER = ../make_dparser
 # DParser suffix
-DPS = d_parser
+DPS = g.d_parser
 
 # This macro will generate all the targets required to build one program.
 # It also appends dependencies / rules for targets 'all' and 'clean'
 define make-prog-target
-  $1/$1.g.$(DPS).c: $1/$1.g
+  $1/$1.$(DPS).c: $1/$1.g
 	$(DPARSER) $1/$1.g
 
-  $1/$1: $1/$1.g.$(DPS).o $1/$1.o
-	$(LD) $(LDFLAGS) -o $1/$1 $1/$1.g.$(DPS).o $1/$1.o $(LDLIBS)
+  $1/$1.o: $1/$1.c $1/$1.h
+	$(CC) $(CFLAGS) -o $1/$1.o $1/$1.c
+
+  $1/$1.$(DPS).o: $1/$1.$(DPS).c $1/$1.h
+	$(CC) $(CFLAGS) -o $1/$1.$(DPS).o $1/$1.$(DPS).c
+
+  $1/$1: $1/$1.$(DPS).o $1/$1.o
+	$(LD) $(LDFLAGS) -o $1/$1 $1/$1.$(DPS).o $1/$1.o $(LDLIBS)
 
   all:: $1/$1
 
   clean::
-	rm -f $1/$1.g.$(DPS).c $1/$1.g.$(DPS).o $1/$1.o $1/$1
+	rm -f $1/$1.$(DPS).c $1/$1.$(DPS).o $1/$1.o $1/$1
 endef
 
 # We can now generate the rules for all listed programs.
