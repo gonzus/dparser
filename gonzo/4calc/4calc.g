@@ -1,11 +1,7 @@
 {
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct CalcNode {
-  int value;
-} CalcNode;
-#define D_ParseNode_User CalcNode
+#include "4calc.h"
 }
 
 translation_unit:
