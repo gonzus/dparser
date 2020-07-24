@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-// dparse.h must be included after expr.h so D_ParseNode_User exists
+// dparse.h must be included last so D_ParseNode_User exists
 #include "expr.h"
 #include <dparse.h>
+
+// #define FIXED_INPUT "2+3*4+5*6"
 
 // Defined in file generated from grammar
 extern D_ParserTables parser_tables_gram;
@@ -24,14 +26,13 @@ int main(int argc, char* argv[]) {
 
         while (1) {
             char line[256];
-#if 1
+#if defined(FIXED_INPUT)
+            strcpy(line, FIXED_INPUT);
+#else
             if (!fgets(line, 255, stdin)) {
                 break;
             }
-#else
-            strcpy(line, "2+3*4+5*6");
 #endif
-
             int len = strlen(line);
             int j = 0;
             for (j = len - 1; j >= 0; --j) {
@@ -57,6 +58,9 @@ int main(int argc, char* argv[]) {
             printf("value = %d\n", node->user.value);
             free_D_ParseNode(parser, node);
             node = 0;
+#if defined(FIXED_INPUT)
+            break;
+#endif
         }
 
         if (node) {
