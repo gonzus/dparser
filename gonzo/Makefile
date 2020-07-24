@@ -4,6 +4,7 @@ first: all
 PROGS = \
 	4calc \
 	json \
+	expr \
 
 # Configuration to compile C sources into objects.
 CC = cc -c
