@@ -675,8 +675,8 @@ static void write_scanner_data(File *fp, Grammar *g, char *tag) {
     ptrans_scanner_block_hash = &trans_scanner_block_hash[scanner_size(s) - 1];
     for (j = 0; j < ss->n; j++) {
       if (!s->same_shifts) {
-        int k, x;
-        for (k = 0; k < g->scanner_blocks; k++) {
+        int x;
+        for (int k = 0; k < g->scanner_blocks; k++) {
           vsblock[ivsblock].state_index = s->index;
           vsblock[ivsblock].scanner_index = j;
           vsblock[ivsblock].block_index = k;

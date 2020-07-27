@@ -67,7 +67,10 @@ ifeq ($(D_BUILD_VERSION),)
 endif
 CFLAGS += -DD_MAJOR_VERSION=$(MAJOR) -DD_MINOR_VERSION=$(MINOR) -DD_BUILD_VERSION=\"$(D_BUILD_VERSION)\"
 
-CFLAGS += -Wall
+# enable all warnings
+CFLAGS += -Wall -Wextra -Wshadow -Wpedantic
+# disable these warnings -- there are too many of them!
+CFLAGS += -Wno-unused-parameter
 # debug flags
 ifdef D_DEBUG
 CFLAGS += -g -DD_DEBUG=1

@@ -1006,11 +1006,11 @@ static PNode *make_PNode(Parser *p, uint hash, int symbol, d_loc_t *start_loc, c
       return NULL;
     }
     if (path && path->n > 1) {
-      uint n = path->n, i;
-      for (i = 0; i < n; i += n - 1) {
-        PNode *child = new_pn->children.v[i];
+      uint n = path->n;
+      for (unsigned int j = 0; j < n; j += n - 1) {
+        PNode *child = new_pn->children.v[j];
         if (child->assoc && new_pn->assoc &&
-            !check_child(new_pn->priority, new_pn->assoc, child->priority, child->assoc, i == 0, i == n - 1)) {
+            !check_child(new_pn->priority, new_pn->assoc, child->priority, child->assoc, j == 0, j == n - 1)) {
           free_PNode(p, new_pn);
           return NULL;
         }
@@ -1632,7 +1632,9 @@ static PNode *commit_tree(Parser *p, PNode *pn) {
       continue;
     }
   }
-  if (pn->reduction) DBG(printf("commit %p (%s)\n", (void *)pn, p->t->symbols[pn->parse_node.symbol].name));
+  if (pn->reduction) {
+      DBG(printf("commit %p (%s)\n", (void *)pn, p->t->symbols[pn->parse_node.symbol].name));
+  }
   if (pn->reduction && pn->reduction->final_code)
     pn->reduction->final_code(pn, (void **)&pn->children.v[0], pn->children.n,
                               (intptr_t) & ((PNode *)(NULL))->parse_node, (D_Parser *)p);

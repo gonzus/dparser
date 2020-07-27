@@ -40,9 +40,9 @@ static int longest_match = 0;
 static int scanner_blocks = 4;
 static int scanner_block_size;
 
-static void help(ArgumentState *arg_state, char *arg_unused);
+static void help(ArgumentState *a_state, char *a_unused);
 
-ArgumentDescription arg_desc[] = {
+static ArgumentDescription arg_desc[] = {
     {"longest_match", 'l', "Use Longest Match Rule for Tokens", "T", &longest_match, "D_MAKE_LONGEST_MATCH", NULL},
     {"tokenizer", 'T', "Tokenizer for START", "T", &tokenizer, "D_MAKE_PARSER_TOKENIZER", NULL},
     {"whitespace_states", 'C', "Compute Whitespace States", "T", &states_for_whitespace, "D_MAKE_PARSER_WHITESPACE",
@@ -71,31 +71,17 @@ ArgumentDescription arg_desc[] = {
     {"help", 'h', "Help", NULL, NULL, NULL, help},
     {0}};
 
-ArgumentState arg_state = {0, 0, "program", arg_desc};
+static ArgumentState arg_state = {0, 0, "program", arg_desc};
 
-static void help(ArgumentState *arg_state, char *arg_unused) {
+static void help(ArgumentState *a_state, char *a_unused) {
   char ver[30];
   d_version(ver);
   fprintf(stderr, "Test DParser Version %s ", ver);
   fprintf(stderr, "Copyright (c) 2002-2013 John Plevyak\n");
-  usage(arg_state, arg_unused);
+  usage(a_state, a_unused);
 }
 
-char *ops = "+";
-void *ops_cache = NULL;
-int ops_scan(char *ops, void *ops_cache, d_loc_t *loc, unsigned char *op_assoc, int *op_priority) {
-  (void)ops;
-  (void)ops_cache;
-  if (loc->s[0] == '+') {
-    loc->s++;
-    *op_assoc = ASSOC_BINARY_LEFT;
-    *op_priority = 9500;
-    return 1;
-  }
-  return 0;
-}
-
-int spec_code(void *new_ps, void **children, int n_children, int pn_offset, struct D_Parser *parser) {
+static int spec_code(void *new_ps, void **children, int n_children, int pn_offset, struct D_Parser *parser) {
   (void)new_ps;
   (void)children;
   (void)n_children;
@@ -104,7 +90,7 @@ int spec_code(void *new_ps, void **children, int n_children, int pn_offset, stru
   return 0;
 }
 
-int final_code(void *new_ps, void **children, int n_children, int pn_offset, struct D_Parser *parser) {
+static int final_code(void *new_ps, void **children, int n_children, int pn_offset, struct D_Parser *parser) {
   (void)new_ps;
   (void)children;
   (void)n_children;

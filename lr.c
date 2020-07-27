@@ -302,10 +302,11 @@ static void build_right_epsilon_hints(Grammar *g) {
         }
         ss = s;
         for (z = e->index; z < r->elems.n; z++) ss = goto_State(ss, r->elems.v[z]);
-        if (ss && r->elems.n)
+        if (ss && r->elems.n) {
           vec_add(&s->right_epsilon_hints, new_Hint(r->elems.n - e->index - 1, ss, r));
-        else /* ignore for states_for_each_productions */
-          ;
+        } else {
+            /* ignore for states_for_each_productions */
+        }
       }
     Lnext:;
     }

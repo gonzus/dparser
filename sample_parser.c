@@ -18,19 +18,19 @@
 
 extern D_ParserTables parser_tables_gram;
 
-int save_parse_tree = 1;
-int partial_parses = 0;
-int fixup = 1;
-int fixup_ebnf = 0;
-int compare_stacks = 1;
-int commit_actions_interval = 100;
-int start_state = 0;
-int dont_use_greediness_for_disambiguation = 0;
-int dont_use_height_for_disambiguation = 0;
+static int save_parse_tree = 1;
+static int partial_parses = 0;
+static int fixup = 1;
+static int fixup_ebnf = 0;
+static int compare_stacks = 1;
+static int commit_actions_interval = 100;
+static int start_state = 0;
+static int dont_use_greediness_for_disambiguation = 0;
+static int dont_use_height_for_disambiguation = 0;
 
-static void help(ArgumentState *arg_state, char *arg_unused);
+static void help(ArgumentState *a_state, char *a_unused);
 
-ArgumentDescription arg_desc[] = {
+static ArgumentDescription arg_desc[] = {
     {"start_state", 'S', "Start State", "I", &start_state, "D_PARSE_START_STATE", NULL},
     {"save_parse_tree", 's', "Save Parse Tree", "T", &save_parse_tree, "D_PARSE_SAVE_PARSE_TREE", NULL},
     {"partial_parses", 'p', "Partial Parses", "T", &partial_parses, "D_PARSE_PARTIAL_PARSES", NULL},
@@ -47,28 +47,14 @@ ArgumentDescription arg_desc[] = {
     {"help", 'h', "Help", NULL, NULL, NULL, help},
     {0}};
 
-ArgumentState arg_state = {0, 0, "program", arg_desc};
+static ArgumentState arg_state = {0, 0, "program", arg_desc};
 
-static void help(ArgumentState *arg_state, char *arg_unused) {
+static void help(ArgumentState *a_state, char *a_unused) {
   char ver[30];
   d_version(ver);
   fprintf(stderr, "Sample DParser Version %s ", ver);
   fprintf(stderr, "Copyright (c) 2002-2013 John Plevyak\n");
-  usage(arg_state, arg_unused);
-}
-
-char *ops = "+";
-void *ops_cache = NULL;
-int ops_scan(char *ops, void *ops_cache, d_loc_t *loc, unsigned char *op_assoc, int *op_priority) {
-  (void)ops;
-  (void)ops_cache;
-  if (loc->s[0] == '+') {
-    loc->s++;
-    *op_assoc = ASSOC_BINARY_LEFT;
-    *op_priority = 9500;
-    return 1;
-  }
-  return 0;
+  usage(a_state, a_unused);
 }
 
 int main(int argc, char *argv[]) {

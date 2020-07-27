@@ -268,7 +268,7 @@ D_Scope *commit_D_Scope(D_Scope *st) {
 }
 
 D_Sym *new_D_Sym(D_Scope *st, char *name, char *end, int sizeof_D_Sym) {
-  uint len = end ? end - name : name ? strlen(name) : 0;
+  uint len = end ? (size_t) (end - name) : name ? strlen(name) : 0;
   D_Sym *s = MALLOC(sizeof_D_Sym);
   memset(s, 0, sizeof_D_Sym);
   s->name = name;
@@ -338,7 +338,7 @@ static D_Sym *find_D_Sym_internal(D_Scope *cur, char *name, int len, uint h) {
 }
 
 D_Sym *find_D_Sym(D_Scope *st, char *name, char *end) {
-  uint len = end ? end - name : strlen(name);
+  uint len = end ? (size_t) (end - name) : strlen(name);
   uint h = strhashl(name, len);
   D_Sym *s = find_D_Sym_internal(st, name, len, h);
   if (s) return current_D_Sym(st, s);
@@ -347,7 +347,7 @@ D_Sym *find_D_Sym(D_Scope *st, char *name, char *end) {
 
 D_Sym *find_global_D_Sym(D_Scope *st, char *name, char *end) {
   D_Sym *s;
-  uint len = end ? end - name : strlen(name);
+  uint len = end ? (size_t) (end - name) : strlen(name);
   uint h = strhashl(name, len);
   D_Scope *cur = st;
   while (cur->up) cur = cur->search;
@@ -357,7 +357,7 @@ D_Sym *find_global_D_Sym(D_Scope *st, char *name, char *end) {
 }
 
 D_Sym *find_D_Sym_in_Scope(D_Scope *st, D_Scope *cur, char *name, char *end) {
-  uint len = end ? end - name : strlen(name);
+  uint len = end ? (size_t) (end - name) : strlen(name);
   uint h = strhashl(name, len);
   D_Sym *s = find_D_Sym_in_Scope_internal(cur, name, len, h);
   if (s) return current_D_Sym(st, s);

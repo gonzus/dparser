@@ -227,6 +227,8 @@ static void unescape_term_string(Term *t) {
             d_fail("encountered an escaped NULL while processing '%s'", t->string);
           } else
             goto next;
+          /* FIXME added this fall through comment to quiet a warning -- is this correct? */
+          /* fall through */
         Ldefault:
         default:
           *ss++ = *s;
@@ -374,6 +376,8 @@ void add_declaration(Grammar *g, char *start, char *end, uint kind, uint line) {
       return;
     case DECLARE_SET_OP_PRIORITY:
       d_fail("declare does not expect argument, line %d", line);
+      /* FIXME added this break to quiet a warning -- is this correct? */
+      break;
     default:
       new_declaration(g, new_ident(start, end, NULL), kind);
       break;

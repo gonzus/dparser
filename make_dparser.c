@@ -12,7 +12,9 @@
 #include "write_tables.h"
 #include "mkdparse.h"
 
-static void help(ArgumentState *arg_state, char *arg_unused);
+extern D_ParserTables parser_tables_dparser_gram;
+
+static void help(ArgumentState *a_state, char *a_unused);
 
 static int set_op_priority_from_rule = 0;
 static int right_recursive_BNF = 0;
@@ -58,14 +60,12 @@ static ArgumentDescription arg_desc[] = {
 
 static ArgumentState arg_state = {0, 0, "program", arg_desc};
 
-extern D_ParserTables parser_tables_dparser_gram;
-
-static void help(ArgumentState *arg_state, char *arg_unused) {
+static void help(ArgumentState *a_state, char *a_unused) {
   char ver[30];
   d_version(ver);
   fprintf(stderr, "Make DParser Version %s ", ver);
   fprintf(stderr, "Copyright (c) 2002-2004 John Plevyak\n");
-  usage(arg_state, arg_unused);
+  usage(a_state, a_unused);
 }
 
 int main(int argc, char *argv[]) {
