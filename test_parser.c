@@ -17,27 +17,29 @@
 #include "write_tables.h"
 #include "mkdparse.h"
 
-extern D_ParserTables parser_tables_dparser_gram;
-
 #define SIZEOF_MY_PARSE_NODE 100 /* permit test cases up to this size */
+
+extern D_ParserTables parser_tables_dparser_gram;
 
 static int save_parse_tree = 1;
 static int partial_parses = 0;
 static int fixup = 1;
 static int fixup_ebnf = 0;
 static int compare_stacks = 1;
-static int no_height_disamb = 0;
-static int no_greedy_disamb = 0;
 static int commit_actions_interval = 100;
 static int start_state = 0;
+static int dont_use_greediness_for_disambiguation = 0;
+static int dont_use_height_for_disambiguation = 0;
 
-static int set_op_priority_from_rule = 0;
-static int right_recursive_BNF = 0;
+static int longest_match = 0;
+static int tokenizer = 0;
 static int states_for_whitespace = 1;
 static int states_for_all_nterms = 0;
-static int tokenizer = 0;
-static int longest_match = 0;
 static int scanner_blocks = 4;
+static int set_op_priority_from_rule = 0;
+static int right_recursive_BNF = 0;
+
+/* FIXME is this used at all? */
 static int scanner_block_size;
 
 static void help(ArgumentState *a_state, char *a_unused);
@@ -45,14 +47,11 @@ static void help(ArgumentState *a_state, char *a_unused);
 static ArgumentDescription arg_desc[] = {
     {"longest_match", 'l', "Use Longest Match Rule for Tokens", "T", &longest_match, "D_MAKE_LONGEST_MATCH", NULL},
     {"tokenizer", 'T', "Tokenizer for START", "T", &tokenizer, "D_MAKE_PARSER_TOKENIZER", NULL},
-    {"whitespace_states", 'C', "Compute Whitespace States", "T", &states_for_whitespace, "D_MAKE_PARSER_WHITESPACE",
-     NULL},
+    {"whitespace_states", 'C', "Compute Whitespace States", "T", &states_for_whitespace, "D_MAKE_PARSER_WHITESPACE", NULL},
     {"all_states", 'A', "Compute States For All NTERMs", "T", &states_for_all_nterms, "D_MAKE_PARSER_ALL_NTERMS", NULL},
     {"scanner_blocks", 'b', "Scanner Blocks", "I", &scanner_blocks, "D_MAKE_PARSER_SCANNER_BLOCKS", NULL},
-    {"op_pri_from_rule", 'p', "Set Operator Priority From Rule", "T", &set_op_priority_from_rule,
-     "D_MAKE_PARSER_SET_PRIORITY", NULL},
-    {"right_recurse_BNF", 'r', "Use Right Recursion For */+", "T", &right_recursive_BNF,
-     "D_MAKE_PARSER_RIGHT_RECURSIVE_BNF", NULL},
+    {"op_pri_from_rule", 'p', "Set Operator Priority From Rule", "T", &set_op_priority_from_rule, "D_MAKE_PARSER_SET_PRIORITY", NULL},
+    {"right_recurse_BNF", 'r', "Use Right Recursion For */+", "T", &right_recursive_BNF, "D_MAKE_PARSER_RIGHT_RECURSIVE_BNF", NULL},
 
     {"start_state", 'S', "Start State", "I", &start_state, "D_PARSE_START_STATE", NULL},
     {"save_parse_tree", 's', "Save Parse Tree", "T", &save_parse_tree, "D_PARSE_SAVE_PARSE_TREE", NULL},
@@ -62,13 +61,14 @@ static ArgumentDescription arg_desc[] = {
     {"fixup", 'f', "Fixup Internal Productions", "T", &fixup, "D_PARSE_FIXUP", NULL},
     {"fixup_ebnf", 'e', "Fixup EBNF Productions", "T", &fixup_ebnf, "D_PARSE_FIXUP_EBNF", NULL},
 
-    {"noheight", 'H', "Do not use Height Disambiguization", "T", &no_height_disamb, "D_PARSE_NO_HEIGHT_DISAMB", NULL},
-    {"nogreedy", 'G', "Do not use Greedy Disambiguization", "T", &no_greedy_disamb, "D_PARSE_NO_GREEDY_DISAMB", NULL},
+    {"nogreedy", 'G', "Do not use Greedy Disambiguization", "T", &dont_use_greediness_for_disambiguation, "D_PARSE_NO_GREEDY_DISAMB", NULL},
+    {"noheight", 'H', "Do not use Height Disambiguization", "T", &dont_use_height_for_disambiguation, "D_PARSE_NO_HEIGHT_DISAMB", NULL},
 
     {"verbose", 'v', "Verbose", "+", &d_verbose_level, "D_PARSE_VERBOSE", NULL},
     {"test", 't', "Test", "+", &test_level, "D_PARSE_TEST", NULL},
     {"debug", 'd', "Debug", "+", &d_debug_level, "D_PARSE_DEBUG", NULL},
     {"help", 'h', "Help", NULL, NULL, NULL, help},
+
     {0}};
 
 static ArgumentState arg_state = {0, 0, "program", arg_desc};
@@ -101,7 +101,8 @@ static int final_code(void *new_ps, void **children, int n_children, int pn_offs
 
 int main(int argc, char *argv[]) {
   int i, len = 0;
-  char *buf = NULL, *fn, *grammar_pathname;
+  char *buf = NULL, *fn;
+  char *grammar_pathname;
   D_Parser *p;
   D_ParseNode *pn = NULL;
   unsigned char *str = NULL;
@@ -144,8 +145,8 @@ int main(int argc, char *argv[]) {
   p->dont_fixup_internal_productions = !fixup;
   p->fixup_EBNF_productions = fixup_ebnf;
   p->dont_compare_stacks = !compare_stacks;
-  p->dont_use_height_for_disambiguation = no_height_disamb;
-  p->dont_use_greediness_for_disambiguation = no_greedy_disamb;
+  p->dont_use_greediness_for_disambiguation = dont_use_greediness_for_disambiguation;
+  p->dont_use_height_for_disambiguation = dont_use_height_for_disambiguation;
   p->commit_actions_interval = commit_actions_interval;
   p->start_state = start_state;
   for (i = 1; i < arg_state.nfile_arguments; i++) {
